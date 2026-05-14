@@ -36,6 +36,13 @@ const io = new SocketIOServer(server, {
 const startServer = async () => {
   await initializeDatabase();
   setupSocketIO(io);
+  server.on('error', (err: any) => {
+    if (err?.code === 'EADDRINUSE') {
+      console.error(`Port ${port} is already in use. Kill the process and retry.`);
+      process.exit(1);
+    }
+  });
+
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
   });
